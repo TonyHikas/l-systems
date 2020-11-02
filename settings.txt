@@ -1,0 +1,29 @@
+Файл с настройками для L-систем
+----------------------------
+
+axiom = "FF+F-FF-F+FF"
+rule = "[3F]-2F++2F-[3F]"
+start_angle = 90
+angle = 25
+nesting = 4
+length = 5
+
+----------------------------
+
+axiom = "F+F-FF"
+rule = "-F+[FF++FF++FF]-F+"
+start_angle = 60
+angle = 12
+nesting = 4
+length = 5
+
+----------------------------
+
+axiom = "F++F++F"
+rule = "-2F3F-"
+start_angle = 60
+angle = 60
+nesting = 12
+length = 5
+
+----------------------------
