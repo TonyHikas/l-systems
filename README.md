@@ -12,6 +12,6 @@ length = 5		        # длина линии
 ```
 
 ## Результаты
-![Куст 1](https://github.com/TonyHikas/l-systems/imgs/img1.png)
-![Куст 2](https://github.com/TonyHikas/l-systems/imgs/img2.png)
-![Фрактал](https://github.com/TonyHikas/l-systems/imgs/img3.png)
+![Куст 1](https://github.com/TonyHikas/l-systems/blob/main/imgs/img1.png)
+![Куст 2](https://github.com/TonyHikas/l-systems/blob/main/imgs/img2.png)
+![Фрактал](https://github.com/TonyHikas/l-systems/blob/main/imgs/img3.png)
