@@ -23,10 +23,10 @@ def create_lines(axiom: str, settings) -> List[Line]:
     Создание линий по строке
     """
     resp = []
-    x = 100
-    y = 100
+    x = settings.start_x
+    y = settings.start_y
     heading = -settings.start_angle + 90
-    line = Line(points=(), width=1, cap="round", joint="round", close=False)
+    line = Line(points=(), width=settings.width, cap="round", joint="round", close=False)
     line.points += (x, y)
     stack = []
     for i in axiom:
@@ -38,7 +38,7 @@ def create_lines(axiom: str, settings) -> List[Line]:
             line.points += (x, y)
         elif i == "b":
             resp.append(line)
-            line = Line(points=(), width=1, cap="round", joint="round", close=False)
+            line = Line(points=(), width=settings.width, cap="round", joint="round", close=False)
             x1 = settings.length * math.sin(math.radians(heading))
             y1 = settings.length * math.cos(math.radians(heading))
             x += x1
@@ -53,7 +53,7 @@ def create_lines(axiom: str, settings) -> List[Line]:
             y = stack.pop()
             x = stack.pop()
             resp.append(line)
-            line = Line(points=(), width=1, cap="round", joint="round", close=False)
+            line = Line(points=(), width=settings.width, cap="round", joint="round", close=False)
             line.points += (x, y)
         elif i == "+":
             heading += settings.angle

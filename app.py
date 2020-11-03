@@ -1,22 +1,17 @@
+import pickle
+import os
+import copy
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Line
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
+from kivy.graphics import Color
 from kivy.lang import Builder
+from kivy.uix.button import Button
+from kivy import platform
+from kivy.uix.filechooser import FileChooser
 
 from common import apply_rules, create_lines
 
-
-# class BaseSettings:
-#     axiom = "F++F++F"
-#     rule = "-2F3F-"
-#     start_angle = 60
-#     angle = 60
-#     nesting = 12
-#     length = 15
 
 class BaseSettings:
     def __init__(self):
@@ -26,6 +21,9 @@ class BaseSettings:
         self.angle = 12
         self.nesting = 4
         self.length = 5
+        self.width = 1
+        self.start_x = 100
+        self.start_y = 100
 
 
 class Painter(Widget):
@@ -43,27 +41,80 @@ class Painter(Widget):
 
 
 class LSystemApp(App):
+
     def build(self):
-        main_layout = BoxLayout(orientation="horizontal")
-        settings_layout = Builder.load_file('./templates/settings.kv')
-        start_button = Button(text="Start")
-        settings_layout.add_widget(start_button)
+        self.root = BoxLayout(orientation="horizontal")
+        self.settings_layout = Builder.load_file('./templates/settings.kv')
+
         painter = Painter()
-        main_layout.add_widget(painter)
-        main_layout.add_widget(settings_layout)
+        self.root.add_widget(painter)
+        self.root.add_widget(self.settings_layout)
 
-        start_button.bind(on_press=lambda a: self.start(painter, settings_layout))
-        return main_layout
+        self.settings_layout.ids.start.bind(on_press=lambda a: self.start(painter))
+        self.settings_layout.ids.save.bind(
+            on_press=lambda a: self.save_settings(self.settings_layout.ids.config_save_name.text)
+        )
+        self.load_config_list()
+        return self.root
 
-    def start(self, painter, settings_layout):
-        settings = BaseSettings()
-        settings.axiom = settings_layout.ids.axiom.text
-        settings.rule = settings_layout.ids.rule.text
-        settings.start_angle = float(settings_layout.ids.start_angle.text)
-        settings.angle = float(settings_layout.ids.angle.text)
-        settings.nesting = int(settings_layout.ids.nesting.text)
-        settings.length = float(settings_layout.ids.length.text)
+    def start(self, painter):
+        # настройки введёные пользователем
+        settings = self.create_settings_from_layout()
+
         painter.draw(settings)
+
+    def create_settings_from_layout(self):
+        settings = BaseSettings()
+        settings.axiom = self.settings_layout.ids.axiom.text
+        settings.rule = self.settings_layout.ids.rule.text
+        settings.start_angle = float(self.settings_layout.ids.start_angle.text)
+        settings.angle = float(self.settings_layout.ids.angle.text)
+        settings.nesting = int(self.settings_layout.ids.nesting.text)
+        settings.length = float(self.settings_layout.ids.length.text)
+        settings.start_x = int(self.settings_layout.ids.start_x.text)
+        settings.start_y = int(self.settings_layout.ids.start_y.text)
+        settings.width = float(self.settings_layout.ids.width.text)
+        return settings
+
+    def load_config_list(self):
+        configs = os.listdir(os.path.dirname(__file__)+"/configs")
+        for ch in self.settings_layout.ids.configs.children:
+            self.settings_layout.ids.configs.remove_widget(ch)
+        for config in configs:
+            button = Button(text=config, size_hint_y=None, height=100)
+            button.bind(on_press=lambda a: self.select_file(a.text))
+
+            self.settings_layout.ids.configs.add_widget(button)
+
+    def select_file(self, name):
+        """
+        Выбор фалйа
+        """
+        try:
+            with open(os.path.dirname(__file__)+"/configs/"+name, 'rb') as f:
+                settings = pickle.load(f)
+                self.settings_layout.ids.axiom.text = str(settings.axiom)
+                self.settings_layout.ids.rule.text = str(settings.rule)
+                self.settings_layout.ids.start_angle.text = str(settings.start_angle)
+                self.settings_layout.ids.angle.text = str(settings.angle)
+                self.settings_layout.ids.nesting.text = str(settings.nesting)
+                self.settings_layout.ids.length.text = str(settings.length)
+                self.settings_layout.ids.start_x.text = str(settings.start_x)
+                self.settings_layout.ids.start_y.text = str(settings.start_y)
+                self.settings_layout.ids.width.text = str(settings.width)
+
+        except FileNotFoundError:
+            print("Файл не был найдён")
+
+    def save_settings(self, name):
+        """
+        Сохранение конфигурации в файл
+        """
+        settings = self.create_settings_from_layout()
+        with open(os.path.dirname(__file__)+"/configs/"+name, 'wb') as f:
+            pickle.dump(settings, f)
+
+        self.load_config_list()
 
 
 if __name__ == "__main__":  
