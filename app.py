@@ -8,7 +8,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
-from settings import ClassicSettings, Settings
+from settings import ClassicSettings, Settings, ColoredSettings, TreeSettings
 
 
 class Painter(Widget):
@@ -48,14 +48,25 @@ class LSystemApp(App):
         self.root.add_widget(painter)
         self.root.add_widget(self.settings_layout)
 
-        self.settings_layout.ids.start.bind(on_press=lambda a: self.start(painter))
+        self.settings_layout.ids.start.bind(
+            on_press=lambda a: self.start(painter)
+        )
         self.settings_layout.ids.save.bind(
             on_press=lambda a: self.save_settings(self.settings_layout.ids.config_save_name.text)
+        )
+        self.settings_layout.ids.switch_classic.bind(
+            on_press=lambda a: self.new_settings(ClassicSettings())
+        )
+        self.settings_layout.ids.switch_colored.bind(
+            on_press=lambda a: self.new_settings(ColoredSettings())
+        )
+        self.settings_layout.ids.switch_tree.bind(
+            on_press=lambda a: self.new_settings(TreeSettings())
         )
         self.load_config_list()
 
         self.settings = ClassicSettings()
-        self.create_props_widgets()
+        self.create_settings_widgets()
 
         return self.root
 
@@ -66,9 +77,17 @@ class LSystemApp(App):
         self.create_settings_from_layout()
         painter.draw(self.settings)
 
-    def create_props_widgets(self):
+    def new_settings(self, settings):
         """
-        Создание виджетов для отображдения параметров
+        Создание новой настройки
+        """
+        self.settings = settings
+        self.create_settings_widgets()
+        self.settings_layout.ids.config_save_name.text = "new_config"
+
+    def create_settings_widgets(self):
+        """
+        Создание виджетов для отображдения настройки
         """
         for child in [child for child in self.settings_layout.ids.props.children]:
             self.settings_layout.ids.props.remove_widget(child)
@@ -96,7 +115,7 @@ class LSystemApp(App):
             self.settings_layout.ids.configs.remove_widget(child)
 
         for config in configs:
-            button = Button(text=config, size_hint_y=None, height=100)
+            button = Button(text=config, size_hint_y=None, height=50)
             button.bind(on_press=lambda a: self.select_file(a.text))
 
             self.settings_layout.ids.configs.add_widget(button)
@@ -108,7 +127,8 @@ class LSystemApp(App):
         try:
             with open(os.path.dirname(__file__)+"/configs/"+name, 'r') as f:
                 self.settings = Settings.create_from_json(f)
-                self.create_props_widgets()
+                self.create_settings_widgets()
+                self.settings_layout.ids.config_save_name.text = name
 
         except FileNotFoundError:
             print("Файл не был найдён")
@@ -121,7 +141,7 @@ class LSystemApp(App):
         json_data = self.settings.json()
         with open(os.path.dirname(__file__)+"/configs/"+name, 'w') as f:
             f.write(json_data)
-        self.create_props_widgets()
+        self.create_settings_widgets()
         self.load_config_list()
 
 

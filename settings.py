@@ -1,7 +1,7 @@
 import json
 from enum import IntEnum
 
-from workers import ClassicWorker
+from workers import ClassicWorker, ColoredWorker
 
 
 class SettingType(IntEnum):
@@ -111,7 +111,7 @@ class ColoredSettings(Settings):
     def __init__(self):
         super(ColoredSettings, self).__init__()
         self.type = SettingType.COLORED
-        self.worker = ClassicWorker
+        self.worker = ColoredWorker
         self.props = {
             "axiom": {
                 "name": "Axiom",
