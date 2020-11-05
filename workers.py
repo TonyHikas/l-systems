@@ -42,6 +42,9 @@ class ClassicWorker(Worker):
         x = float(settings.props["start_x"]["value"])
         y = float(settings.props["start_y"]["value"])
         heading = -float(settings.props["start_angle"]["value"]) + 90
+        # преобразование hex в rgb
+        color_hex = settings.props["color"]["value"].lstrip('#')
+        resp.append(Color(*tuple(int(color_hex[i:i + 2], 16) for i in (0, 2, 4))))
         line = Line(points=(), width=float(settings.props["width"]["value"]), cap="round", joint="round", close=False)
         line.points += (x, y)
         stack = []
@@ -54,7 +57,13 @@ class ClassicWorker(Worker):
                 line.points += (x, y)
             elif i == "b":
                 resp.append(line)
-                line = Line(points=(), width=float(settings.props["width"]["value"]), cap="round", joint="round", close=False)
+                line = Line(
+                    points=(),
+                    width=float(settings.props["width"]["value"]),
+                    cap="round",
+                    joint="round",
+                    close=False
+                )
                 x1 = float(settings.props["length"]["value"]) * math.sin(math.radians(heading))
                 y1 = float(settings.props["length"]["value"]) * math.cos(math.radians(heading))
                 x += x1
@@ -69,7 +78,13 @@ class ClassicWorker(Worker):
                 y = stack.pop()
                 x = stack.pop()
                 resp.append(line)
-                line = Line(points=(), width=float(settings.props["width"]["value"]), cap="round", joint="round", close=False)
+                line = Line(
+                    points=(),
+                    width=float(settings.props["width"]["value"]),
+                    cap="round",
+                    joint="round",
+                    close=False
+                )
                 line.points += (x, y)
             elif i == "+":
                 heading += float(settings.props["angle"]["value"])

@@ -96,6 +96,10 @@ class ClassicSettings(Settings):
             "start_y": {
                 "name": "Start y",
                 "value": ""
+            },
+            "color": {
+                "name": "Color",
+                "value": "#000000"
             }
         }
 

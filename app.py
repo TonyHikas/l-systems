@@ -108,7 +108,6 @@ class LSystemApp(App):
         try:
             with open(os.path.dirname(__file__)+"/configs/"+name, 'r') as f:
                 self.settings = Settings.create_from_json(f)
-                print(self.settings.props)
                 self.create_props_widgets()
 
         except FileNotFoundError:
