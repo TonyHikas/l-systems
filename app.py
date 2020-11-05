@@ -14,6 +14,9 @@ from common import apply_rules, create_lines
 
 
 class BaseSettings:
+    """
+    Базовый объект настроек
+    """
     def __init__(self):
         self.axiom = "F+F-FF"
         self.rule = "-F+[FF++FF++FF]-F+"
@@ -34,8 +37,9 @@ class Painter(Widget):
         self.canvas.clear()
         axiom = apply_rules(settings.axiom, settings.rule, settings.nesting)
         lines = create_lines(axiom, settings)
-        # print(axiom)
+
         self.canvas.add(Color(0, 1, 0, 1))
+        # добавление линий на canvas
         for line in lines:
             self.canvas.add(line)
 
@@ -60,7 +64,6 @@ class LSystemApp(App):
     def start(self, painter):
         # настройки введёные пользователем
         settings = self.create_settings_from_layout()
-
         painter.draw(settings)
 
     def create_settings_from_layout(self):
@@ -78,8 +81,11 @@ class LSystemApp(App):
 
     def load_config_list(self):
         configs = os.listdir(os.path.dirname(__file__)+"/configs")
-        for ch in self.settings_layout.ids.configs.children:
-            self.settings_layout.ids.configs.remove_widget(ch)
+
+        # без данного приёма вылетает ошибка
+        for child in [child for child in self.settings_layout.ids.configs.children]:
+            self.settings_layout.ids.configs.remove_widget(child)
+
         for config in configs:
             button = Button(text=config, size_hint_y=None, height=100)
             button.bind(on_press=lambda a: self.select_file(a.text))
