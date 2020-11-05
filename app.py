@@ -4,39 +4,27 @@ import copy
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
-from kivy.graphics import Color
+from kivy.graphics import Color, Rectangle
 from kivy.lang import Builder
 from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 from kivy import platform
 from kivy.uix.filechooser import FileChooser
 
-from common import apply_rules, create_lines
-
-
-class BaseSettings:
-    """
-    Базовый объект настроек
-    """
-    def __init__(self):
-        self.axiom = "F+F-FF"
-        self.rule = "-F+[FF++FF++FF]-F+"
-        self.start_angle = 60
-        self.angle = 12
-        self.nesting = 4
-        self.length = 5
-        self.width = 1
-        self.start_x = 100
-        self.start_y = 100
+from settings import ClassicSettings
 
 
 class Painter(Widget):
     def __init__(self, **kwargs):
         super(Painter, self).__init__(**kwargs)
+        self.canvas.before.add(Color(255, 255, 255, 1))
+        self.canvas.before.add(Rectangle(size=(4000, 4000)))
 
     def draw(self, settings):
         self.canvas.clear()
-        axiom = apply_rules(settings.axiom, settings.rule, settings.nesting)
-        lines = create_lines(axiom, settings)
+        axiom = settings.worker.apply_rules(settings)
+        lines = settings.worker.create_lines(axiom, settings)
 
         self.canvas.add(Color(0, 1, 0, 1))
         # добавление линий на canvas
@@ -59,6 +47,10 @@ class LSystemApp(App):
             on_press=lambda a: self.save_settings(self.settings_layout.ids.config_save_name.text)
         )
         self.load_config_list()
+
+        default_settings = ClassicSettings()
+        self.create_props_widgets(default_settings)
+
         return self.root
 
     def start(self, painter):
@@ -66,17 +58,21 @@ class LSystemApp(App):
         settings = self.create_settings_from_layout()
         painter.draw(settings)
 
+    def create_props_widgets(self, settings):
+        """
+        Создание виджетов для отображдения параметров
+        """
+        for prop_name, prop_value in settings.props.items():
+            label = Label(text=prop_value["name"], size_hint_y=None, height=50)
+            text_input = TextInput(id=prop_name, text=str(prop_value["value"]), size_hint_y=None, height=40)
+            self.settings_layout.ids.props.add_widget(label)
+            self.settings_layout.ids.props.add_widget(text_input)
+
     def create_settings_from_layout(self):
-        settings = BaseSettings()
-        settings.axiom = self.settings_layout.ids.axiom.text
-        settings.rule = self.settings_layout.ids.rule.text
-        settings.start_angle = float(self.settings_layout.ids.start_angle.text)
-        settings.angle = float(self.settings_layout.ids.angle.text)
-        settings.nesting = int(self.settings_layout.ids.nesting.text)
-        settings.length = float(self.settings_layout.ids.length.text)
-        settings.start_x = int(self.settings_layout.ids.start_x.text)
-        settings.start_y = int(self.settings_layout.ids.start_y.text)
-        settings.width = float(self.settings_layout.ids.width.text)
+        settings = ClassicSettings()
+        for child in [child for child in self.settings_layout.ids.props.children]:
+            if child.id is not None:
+                settings.props[child.id]["value"] = child.text
         return settings
 
     def load_config_list(self):
