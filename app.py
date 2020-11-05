@@ -1,8 +1,11 @@
 import os
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.scatter import Scatter, ScatterPlane
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
+from kivy.graphics.transformation import Matrix
 from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.uix.label import Label
@@ -17,14 +20,11 @@ class Painter(Widget):
     """
     def __init__(self, **kwargs):
         super(Painter, self).__init__(**kwargs)
-        self.canvas.before.add(Color(255, 255, 255, 1))
-        self.canvas.before.add(Rectangle(size=(4000, 4000)))
 
     def draw(self, settings):
         self.canvas.clear()
         axiom = settings.worker.apply_rules(settings)
         lines = settings.worker.create_lines(axiom, settings)
-
         self.canvas.add(Color(0, 1, 0, 1))
         # добавление линий на canvas
         for line in lines:
@@ -39,13 +39,21 @@ class LSystemApp(App):
         super(LSystemApp, self).__init__()
         self.settings_layout = None
         self.settings = None
+        self.scatter = None
+        self.draw_layout = None
 
     def build(self):
         self.root = BoxLayout(orientation="horizontal")
         self.settings_layout = Builder.load_file('./templates/settings.kv')
 
+        self.draw_layout = RelativeLayout()
+        self.draw_layout.canvas.before.add(Color(255, 255, 255, 1))
+        self.draw_layout.canvas.before.add(Rectangle(size=(4000, 4000)))
+        self.scatter = ScatterPlane()
         painter = Painter()
-        self.root.add_widget(painter)
+        self.scatter.add_widget(painter)
+        self.draw_layout.add_widget(self.scatter)
+        self.root.add_widget(self.draw_layout)
         self.root.add_widget(self.settings_layout)
 
         self.settings_layout.ids.start.bind(
@@ -63,6 +71,16 @@ class LSystemApp(App):
         self.settings_layout.ids.switch_tree.bind(
             on_press=lambda a: self.new_settings(TreeSettings())
         )
+        self.settings_layout.ids.scale_up.bind(
+            on_press=lambda a: self.scale_up()
+        )
+        self.settings_layout.ids.scale_down.bind(
+            on_press=lambda a: self.scale_down()
+        )
+        self.draw_layout.bind(
+            on_touch_down=lambda obj, touch: self.scale(touch)
+        )
+
         self.load_config_list()
 
         self.settings = ClassicSettings()
@@ -109,7 +127,7 @@ class LSystemApp(App):
         """
         Загрузка списка сохранённых конфигурация
         """
-        configs = os.listdir(os.path.dirname(__file__)+"/configs")
+        configs = sorted(os.listdir(os.path.dirname(__file__)+"/configs"))
 
         for child in [child for child in self.settings_layout.ids.configs.children]:
             self.settings_layout.ids.configs.remove_widget(child)
@@ -143,6 +161,32 @@ class LSystemApp(App):
             f.write(json_data)
         self.create_settings_widgets()
         self.load_config_list()
+
+    def scale(self, touch):
+        """
+        Масштабирование колесом мыши
+        """
+        if touch.is_mouse_scrolling:
+            if touch.button == 'scrolldown':
+                self.scale_up(touch.pos)
+            elif touch.button == 'scrollup':
+                self.scale_down(touch.pos)
+
+    def scale_up(self, anchor=None):
+        """
+        Увеличение кнопкой
+        """
+        if not anchor:
+            anchor = self.draw_layout.center
+        self.scatter.apply_transform(Matrix().scale(1.1, 1.1, 1.1), anchor=anchor)
+
+    def scale_down(self, anchor=None):
+        """
+        Уменьшение кнопкой
+        """
+        if not anchor:
+            anchor = self.draw_layout.center
+        self.scatter.apply_transform(Matrix().scale(0.9, 0.9, 0.9), anchor=anchor)
 
 
 if __name__ == "__main__":  

@@ -27,6 +27,24 @@ BoxLayout:
                     height: 70
                     padding: 10 , 10
                 Label:
+                    text: "Scaling"
+                    size_hint_y: None
+                    height: 50
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: 50
+                    Button:
+                        id: scale_down
+                        text: "-"
+                        size_hint_y: None
+                        height: 50
+                    Button:
+                        id: scale_up
+                        text: "+"
+                        size_hint_y: None
+                        height: 50
+                Label:
                     text: "New system"
                     size_hint_y: None
                     height: 50
