@@ -1,6 +1,4 @@
-import pickle
 import os
-import copy
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
@@ -9,13 +7,14 @@ from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
-from kivy import platform
-from kivy.uix.filechooser import FileChooser
 
-from settings import ClassicSettings
+from settings import ClassicSettings, Settings
 
 
 class Painter(Widget):
+    """
+    Canvas для рисования систем
+    """
     def __init__(self, **kwargs):
         super(Painter, self).__init__(**kwargs)
         self.canvas.before.add(Color(255, 255, 255, 1))
@@ -33,6 +32,13 @@ class Painter(Widget):
 
 
 class LSystemApp(App):
+    """
+    Главное приложение
+    """
+    def __init__(self):
+        super(LSystemApp, self).__init__()
+        self.settings_layout = None
+        self.settings = None
 
     def build(self):
         self.root = BoxLayout(orientation="horizontal")
@@ -48,37 +54,44 @@ class LSystemApp(App):
         )
         self.load_config_list()
 
-        default_settings = ClassicSettings()
-        self.create_props_widgets(default_settings)
+        self.settings = ClassicSettings()
+        self.create_props_widgets()
 
         return self.root
 
     def start(self, painter):
-        # настройки введёные пользователем
-        settings = self.create_settings_from_layout()
-        painter.draw(settings)
+        """
+        Запуск отрисовки
+        """
+        self.create_settings_from_layout()
+        painter.draw(self.settings)
 
-    def create_props_widgets(self, settings):
+    def create_props_widgets(self):
         """
         Создание виджетов для отображдения параметров
         """
-        for prop_name, prop_value in settings.props.items():
+        for child in [child for child in self.settings_layout.ids.props.children]:
+            self.settings_layout.ids.props.remove_widget(child)
+        for prop_name, prop_value in self.settings.props.items():
             label = Label(text=prop_value["name"], size_hint_y=None, height=50)
             text_input = TextInput(id=prop_name, text=str(prop_value["value"]), size_hint_y=None, height=40)
             self.settings_layout.ids.props.add_widget(label)
             self.settings_layout.ids.props.add_widget(text_input)
 
     def create_settings_from_layout(self):
-        settings = ClassicSettings()
+        """
+        Парсинг параметров, введённых пользователем в объект настроек
+        """
         for child in [child for child in self.settings_layout.ids.props.children]:
             if child.id is not None:
-                settings.props[child.id]["value"] = child.text
-        return settings
+                self.settings.props[child.id]["value"] = child.text
 
     def load_config_list(self):
+        """
+        Загрузка списка сохранённых конфигурация
+        """
         configs = os.listdir(os.path.dirname(__file__)+"/configs")
 
-        # без данного приёма вылетает ошибка
         for child in [child for child in self.settings_layout.ids.configs.children]:
             self.settings_layout.ids.configs.remove_widget(child)
 
@@ -93,17 +106,10 @@ class LSystemApp(App):
         Выбор фалйа
         """
         try:
-            with open(os.path.dirname(__file__)+"/configs/"+name, 'rb') as f:
-                settings = pickle.load(f)
-                self.settings_layout.ids.axiom.text = str(settings.axiom)
-                self.settings_layout.ids.rule.text = str(settings.rule)
-                self.settings_layout.ids.start_angle.text = str(settings.start_angle)
-                self.settings_layout.ids.angle.text = str(settings.angle)
-                self.settings_layout.ids.nesting.text = str(settings.nesting)
-                self.settings_layout.ids.length.text = str(settings.length)
-                self.settings_layout.ids.start_x.text = str(settings.start_x)
-                self.settings_layout.ids.start_y.text = str(settings.start_y)
-                self.settings_layout.ids.width.text = str(settings.width)
+            with open(os.path.dirname(__file__)+"/configs/"+name, 'r') as f:
+                self.settings = Settings.create_from_json(f)
+                print(self.settings.props)
+                self.create_props_widgets()
 
         except FileNotFoundError:
             print("Файл не был найдён")
@@ -112,10 +118,11 @@ class LSystemApp(App):
         """
         Сохранение конфигурации в файл
         """
-        settings = self.create_settings_from_layout()
-        with open(os.path.dirname(__file__)+"/configs/"+name, 'wb') as f:
-            pickle.dump(settings, f)
-
+        self.create_settings_from_layout()
+        json_data = self.settings.json()
+        with open(os.path.dirname(__file__)+"/configs/"+name, 'w') as f:
+            f.write(json_data)
+        self.create_props_widgets()
         self.load_config_list()
 
 
