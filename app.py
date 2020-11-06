@@ -107,6 +107,15 @@ class LSystemApp(App):
         """
         Создание виджетов для отображдения настройки
         """
+        # интерпритация правил
+        for child in [child for child in self.settings_layout.ids.interpretation.children]:
+            self.settings_layout.ids.interpretation.remove_widget(child)
+        inters = self.settings.interpretation.split("\n")
+        for inter in inters:
+            label = Label(text=inter, size_hint_y=None, height=20, halign="left")
+            self.settings_layout.ids.interpretation.add_widget(label)
+
+        # параметры
         for child in [child for child in self.settings_layout.ids.props.children]:
             self.settings_layout.ids.props.remove_widget(child)
         for prop_name, prop_value in self.settings.props.items():
@@ -167,10 +176,11 @@ class LSystemApp(App):
         Масштабирование колесом мыши
         """
         if touch.is_mouse_scrolling:
-            if touch.button == 'scrolldown':
-                self.scale_up(touch.pos)
-            elif touch.button == 'scrollup':
-                self.scale_down(touch.pos)
+            if self.draw_layout.size[0] > touch.pos[0]:
+                if touch.button == 'scrolldown':
+                    self.scale_up(touch.pos)
+                elif touch.button == 'scrollup':
+                    self.scale_down(touch.pos)
 
     def scale_up(self, anchor=None):
         """

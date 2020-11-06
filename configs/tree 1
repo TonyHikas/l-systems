@@ -1,0 +1,1 @@
+{"type": 3, "props": {"axiom": "X", "rule": "F[@[-X]+X]", "start_angle": "90", "angle": "30", "nesting": "10", "length": "500", "length_dec": "0.8", "width": "20", "width_dec": "0.8", "start_x": "0", "start_y": "0", "color1": "#45210c", "color_dec": "0.95", "color2": "#33d60b", "color3": "#33d60b", "color4": "#33d60b", "length_leaf": "40", "width_leaf": "20"}}

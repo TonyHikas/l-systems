@@ -1,7 +1,7 @@
 import json
 from enum import IntEnum
 
-from workers import ClassicWorker, ColoredWorker
+from workers import ClassicWorker, ColoredWorker, TreeWorker
 
 
 class SettingType(IntEnum):
@@ -18,6 +18,7 @@ class Settings:
         self.type = None
         self.props = {}
         self.worker = None
+        self.interpretation = ""
 
     @staticmethod
     def create_from_json(json_data):
@@ -58,6 +59,12 @@ class ClassicSettings(Settings):
     """
     def __init__(self):
         super(ClassicSettings, self).__init__()
+        self.interpretation = "F - forward\n" \
+                              "b - forward no color\n" \
+                              "+ - rotate random 45\n" \
+                              "- - rotate random 45\n" \
+                              "[ - save\n" \
+                              "] - restore\n"
         self.type = SettingType.CLASSIC
         self.worker = ClassicWorker
         self.props = {
@@ -110,6 +117,15 @@ class ColoredSettings(Settings):
     """
     def __init__(self):
         super(ColoredSettings, self).__init__()
+        self.interpretation = "F - forward\n" \
+                              "b - forward no color\n" \
+                              "+ - rotate random 45\n" \
+                              "- - rotate random 45\n" \
+                              "[ - save\n" \
+                              "] - restore\n" \
+                              "1 - color 1\n" \
+                              "2 - color 2\n" \
+                              "3 - color 3"
         self.type = SettingType.COLORED
         self.worker = ColoredWorker
         self.props = {
@@ -151,15 +167,15 @@ class ColoredSettings(Settings):
             },
             "color1": {
                 "name": "Color 1",
-                "value": ""
+                "value": "#000000"
             },
             "color2": {
                 "name": "Color 2",
-                "value": ""
+                "value": "#000000"
             },
             "color3": {
                 "name": "Color 3",
-                "value": ""
+                "value": "#000000"
             }
         }
 
@@ -170,8 +186,15 @@ class TreeSettings(Settings):
     """
     def __init__(self):
         super(TreeSettings, self).__init__()
+        self.interpretation = "F - forward\n" \
+                              "X - forward\n" \
+                              "+ - rotate random 45\n" \
+                              "- - rotate random 45\n" \
+                              "[ - save\n" \
+                              "] - restore\n" \
+                              "@ - dec width\n"
         self.type = SettingType.TREE
-        self.worker = ClassicWorker
+        self.worker = TreeWorker
         self.props = {
             "axiom": {
                 "name": "Axiom",
@@ -197,12 +220,16 @@ class TreeSettings(Settings):
                 "name": "Length",
                 "value": ""
             },
+            "length_dec": {
+                "name": "Decreasing ratio length",
+                "value": ""
+            },
             "width": {
                 "name": "Width",
                 "value": ""
             },
             "width_dec": {
-                "name": "Decreasing width",
+                "name": "Decreasing ratio width",
                 "value": ""
             },
             "start_x": {
@@ -214,11 +241,31 @@ class TreeSettings(Settings):
                 "value": ""
             },
             "color1": {
-                "name": "Color 1",
+                "name": "Trunk color",
+                "value": "#000000"
+            },
+            "color_dec": {
+                "name": "Decreasing ratio trunk color",
                 "value": ""
             },
             "color2": {
-                "name": "Color 2",
+                "name": "Leaf color 1",
+                "value": "#000000"
+            },
+            "color3": {
+                "name": "Leaf color 2",
+                "value": "#000000"
+            },
+            "color4": {
+                "name": "Leaf color 3",
+                "value": "#000000"
+            },
+            "length_leaf": {
+                "name": "Leaf length",
+                "value": ""
+            },
+            "width_leaf": {
+                "name": "Leaf width",
                 "value": ""
             }
         }

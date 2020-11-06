@@ -83,6 +83,16 @@ BoxLayout:
             text: "Properties"
             size_hint_y: None
             height: 50
+        Label:
+            text: "Interpretation"
+            size_hint_y: None
+            height: 50
+        GridLayout:
+            id: interpretation
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+
         ScrollView:
             BoxLayout:
                 id: props
