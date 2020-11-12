@@ -73,7 +73,7 @@ class ClassicSettings(Settings):
                 "value": ""
             },
             "rule": {
-                "name": "Rule",
+                "name": "F ->",
                 "value": ""
             },
             "start_angle": {
@@ -134,7 +134,7 @@ class ColoredSettings(Settings):
                 "value": ""
             },
             "rule": {
-                "name": "Rule",
+                "name": "F ->",
                 "value": ""
             },
             "start_angle": {
@@ -201,7 +201,7 @@ class TreeSettings(Settings):
                 "value": ""
             },
             "rule": {
-                "name": "Rule",
+                "name": "X ->",
                 "value": ""
             },
             "start_angle": {

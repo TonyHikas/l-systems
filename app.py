@@ -23,8 +23,10 @@ class Painter(Widget):
 
     def draw(self, settings):
         self.canvas.clear()
+
         axiom = settings.worker.apply_rules(settings)
         lines = settings.worker.create_lines(axiom, settings)
+
         self.canvas.add(Color(0, 1, 0, 1))
         # добавление линий на canvas
         for line in lines:
@@ -93,7 +95,11 @@ class LSystemApp(App):
         Запуск отрисовки
         """
         self.create_settings_from_layout()
-        painter.draw(self.settings)
+        self.settings_layout.ids.errors.text = ""
+        try:
+            painter.draw(self.settings)
+        except ValueError:
+            self.settings_layout.ids.errors.text = "Incorrect or empty properties"
 
     def new_settings(self, settings):
         """

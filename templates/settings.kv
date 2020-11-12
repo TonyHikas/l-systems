@@ -1,4 +1,5 @@
 BoxLayout:
+    orientation: "vertical"
     width: 500
     size_hint_x: None
     canvas.before:
@@ -8,111 +9,125 @@ BoxLayout:
             pos: self.pos
             size: self.size
     BoxLayout:
-        orientation: "vertical"
-        Label:
-            text: "Control"
-            size_hint_y: None
-            height: 50
-        ScrollView:
-            BoxLayout:
-                padding: 5, 0
+        orientation: "horizontal"
+        width: 500
+        size_hint_x: None
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Control"
                 size_hint_y: None
-                orientation: "vertical"
-                size_hint_y: None
-                height: self.minimum_height
-                Button:
-                    id: start
-                    text: "Start"
-                    size_hint_y: None
-                    height: 70
-                    padding: 10 , 10
-                Label:
-                    text: "Scaling"
-                    size_hint_y: None
-                    height: 50
+                height: 50
+            ScrollView:
                 BoxLayout:
-                    orientation: "horizontal"
+                    padding: 5, 0
                     size_hint_y: None
-                    height: 50
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
                     Button:
-                        id: scale_down
-                        text: "-"
+                        id: start
+                        text: "Start"
+                        size_hint_y: None
+                        height: 70
+                        padding: 10 , 10
+                    Label:
+                        text: "Scaling"
+                        size_hint_y: None
+                        height: 50
+                    BoxLayout:
+                        orientation: "horizontal"
+                        size_hint_y: None
+                        height: 50
+                        Button:
+                            id: scale_down
+                            text: "-"
+                            size_hint_y: None
+                            height: 50
+                        Button:
+                            id: scale_up
+                            text: "+"
+                            size_hint_y: None
+                            height: 50
+                    Label:
+                        text: "New system"
                         size_hint_y: None
                         height: 50
                     Button:
-                        id: scale_up
-                        text: "+"
+                        id: switch_classic
+                        text: "Classic"
+                        size_hint_y: None
+                        height: 40
+                    Button:
+                        id: switch_colored
+                        text: "Colored"
+                        size_hint_y: None
+                        height: 40
+                    Button:
+                        id: switch_tree
+                        text: "Tree"
+                        size_hint_y: None
+                        height: 40
+                    Label:
+                        text: "Save config"
                         size_hint_y: None
                         height: 50
-                Label:
-                    text: "New system"
-                    size_hint_y: None
-                    height: 50
-                Button:
-                    id: switch_classic
-                    text: "Classic"
-                    size_hint_y: None
-                    height: 40
-                Button:
-                    id: switch_colored
-                    text: "Colored"
-                    size_hint_y: None
-                    height: 40
-                Button:
-                    id: switch_tree
-                    text: "Tree"
-                    size_hint_y: None
-                    height: 40
-                Label:
-                    text: "Save config"
-                    size_hint_y: None
-                    height: 50
-                TextInput:
-                    id: config_save_name
-                    text: ""
-                    size_hint_y: None
-                    height: 40
-                Button:
-                    id: save
-                    text: "Save Config"
-                    size_hint_y: None
-                    height: 70
-    BoxLayout:
-        orientation: "vertical"
-        Label:
-            text: "Properties"
-            size_hint_y: None
-            height: 50
-        Label:
-            text: "Interpretation"
-            size_hint_y: None
-            height: 50
-        GridLayout:
-            id: interpretation
-            cols: 1
-            size_hint_y: None
-            height: self.minimum_height
-
-        ScrollView:
-            BoxLayout:
-                id: props
-                padding: 5, 0
+                    TextInput:
+                        id: config_save_name
+                        text: ""
+                        size_hint_y: None
+                        height: 40
+                    Button:
+                        id: save
+                        text: "Save Config"
+                        size_hint_y: None
+                        height: 70
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Properties"
                 size_hint_y: None
-                orientation: "vertical"
+                height: 50
+            Label:
+                text: "Interpretation"
+                size_hint_y: None
+                height: 50
+            GridLayout:
+                id: interpretation
+                cols: 1
                 size_hint_y: None
                 height: self.minimum_height
 
+            ScrollView:
+                BoxLayout:
+                    id: props
+                    padding: 5, 0
+                    size_hint_y: None
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Configs"
+                size_hint_y: None
+                height: 50
+            ScrollView:
+                BoxLayout:
+                    padding: 5, 0
+                    size_hint_y: None
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    id: configs
     BoxLayout:
         orientation: "vertical"
+        size_hint_y: None
+        height: 50
         Label:
-            text: "Configs"
+            id: errors
+            text: ""
             size_hint_y: None
             height: 50
-        ScrollView:
-            BoxLayout:
-                padding: 5, 0
-                size_hint_y: None
-                orientation: "vertical"
-                size_hint_y: None
-                height: self.minimum_height
-                id: configs
+            color: 1, 0.1, 0.1, 1
