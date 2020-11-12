@@ -20,6 +20,6 @@
 * возможность добавить свои настроки в коде
 
 ## Фото интерфейса
-![Интнрфейс 1](https://github.com/TonyHikas/l-systems/blob/main/imgs/img5.png)
-![Интнрфейс 2](https://github.com/TonyHikas/l-systems/blob/main/imgs/img6.png)
-![Интнрфейс 3](https://github.com/TonyHikas/l-systems/blob/main/imgs/img7.png)
+![Интерфейс 1](https://github.com/TonyHikas/l-systems/blob/main/imgs/img5.png)
+![Интерфейс 2](https://github.com/TonyHikas/l-systems/blob/main/imgs/img6.png)
+![Интерфейс 3](https://github.com/TonyHikas/l-systems/blob/main/imgs/img7.png)
